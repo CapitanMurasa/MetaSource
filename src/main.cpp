@@ -56,6 +56,8 @@ int main(int argc, char* args[]) {
 
     Shader triangleShader;
     GLuint shaderProgram = triangleShader.CreateProgram("../src/renderer/shaders/default.vert", "../src/renderer/shaders/default.frag");
+    Shader GridShader;
+    GLuint GridshaderProgram = GridShader.CreateProgram("../src/renderer/shaders/grid.vert", "../src/renderer/shaders/grid.frag");
 
     Vertex square[] = {
         // Front face (Red)
@@ -100,7 +102,13 @@ int main(int argc, char* args[]) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    unsigned int emptyVAO;
+    glGenVertexArrays(1, &emptyVAO);
+
     glEnable(GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     while (!quit) {
         while (SDL_PollEvent(&e)) {
@@ -118,7 +126,7 @@ int main(int argc, char* args[]) {
         ImGui::SliderFloat("Cube rotation x", &rotX, -1.0f, 1.0f);
         ImGui::SliderFloat("Cube rotation y", &rotY, -1.0f, 1.0f);
 
-        ImGui::SliderFloat("Camera view Z", &viewZ, -10.0f, 10.0f);
+        ImGui::SliderFloat("Camera view Z", &viewZ, -10.0f, 0.0f);
         ImGui::SliderFloat("Camera Rotation X", &CamrotX, -180.0f, 180.0f);
         ImGui::SliderFloat("Camera Rotation Y", &CamrotY, -180.0f, 180.0f);
 
@@ -150,10 +158,15 @@ int main(int argc, char* args[]) {
         int projLoc = glGetUniformLocation(shaderProgram, "projection");
         glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-        int uni_loc = glGetUniformLocation(shaderProgram, "src_aspect");
-        glUniform1f(uni_loc, (float)SCREEN_HEIGHT / SCREEN_WIDTH);
-
         glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        GridShader.use();
+        glBindVertexArray(emptyVAO);
+
+        glUniformMatrix4fv(glGetUniformLocation(GridShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(glGetUniformLocation(GridShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
