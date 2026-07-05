@@ -39,12 +39,28 @@ int main(int argc, char* args[]) {
     }
 
 
-    Shader triangleShader("../src/renderer/shaders/default.vert", "../src/renderer/shaders/default.frag");
+    Shader triangleShader;
+    GLuint shaderProgram = triangleShader.CreateProgram("../src/renderer/shaders/default.vert", "../src/renderer/shaders/default.frag");
 
-    Vertex triangle[] = {
-    {  0.0f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f }, // Top (Red)
-    { -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f }, // Bottom Left (Green)
-    {  0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f }  // Bottom Right (Blue)
+    Vertex cube[] = {
+        // Front face (Red)
+        {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, { 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f},
+        { 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, {-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f},
+        // Back face (Green)
+        {-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f}, { 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f}, { 0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f},
+        { 0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f}, {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f}, {-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f},
+        // Left face (Blue)
+        {-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f}, {-0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f},
+        {-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f}, {-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f}, {-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f},
+        // Right face (Yellow)
+        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f}, { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f}, { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f},
+        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f}, { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 0.0f}, { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f},
+        // Top face (Cyan)
+        {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f}, { 0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f}, { 0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f},
+        { 0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f}, {-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f}, {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f},
+        // Bottom face (Magenta)
+        {-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}, { 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}, { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f},
+        { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f}, {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}
     };
 
     unsigned int VAO, VBO;
@@ -53,7 +69,7 @@ int main(int argc, char* args[]) {
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
 
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
@@ -63,17 +79,23 @@ int main(int argc, char* args[]) {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    glEnable(GL_DEPTH_TEST);
+
     while (!quit) {
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) quit = true;
         }
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         triangleShader.use();
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        int uni_loc = glGetUniformLocation(shaderProgram, "src_aspect");
+        glUniform1f(uni_loc, (float)SCREEN_HEIGHT / SCREEN_WIDTH);
+
+        glDrawArrays(GL_TRIANGLES, 0, 6);
 
         SDL_GL_SwapWindow(window);
     }
