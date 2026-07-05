@@ -3,6 +3,13 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include "imgui.h"
+#include "imgui_impl_sdl2.h"
+#include "imgui_impl_opengl3.h"
 
 #include "renderer/vertex.h"
 #include "renderer/shader.h"
@@ -31,6 +38,14 @@ int main(int argc, char* args[]) {
 
     SDL_GLContext context = SDL_GL_CreateContext(window);
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark(); 
+
+    ImGui_ImplSDL2_InitForOpenGL(window, context);
+    ImGui_ImplOpenGL3_Init("#version 330 core");
+
 
     glewExperimental = GL_TRUE; 
     if (glewInit() != GLEW_OK) {
@@ -42,7 +57,7 @@ int main(int argc, char* args[]) {
     Shader triangleShader;
     GLuint shaderProgram = triangleShader.CreateProgram("../src/renderer/shaders/default.vert", "../src/renderer/shaders/default.frag");
 
-    Vertex cube[] = {
+    Vertex square[] = {
         // Front face (Red)
         {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, { 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f},
         { 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, {-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f},
@@ -62,6 +77,12 @@ int main(int argc, char* args[]) {
         {-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}, { 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}, { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f},
         { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f}, {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}
     };
+
+    float rotX = 0.0f;
+    float rotY = 0.0f;
+    float viewZ = 0.0f;
+    float CamrotX = 0.0f;
+    float CamrotY = 0.0f;
 
     unsigned int VAO, VBO;
     glGenVertexArrays(1, &VAO);
@@ -83,8 +104,25 @@ int main(int argc, char* args[]) {
 
     while (!quit) {
         while (SDL_PollEvent(&e)) {
+            ImGui_ImplSDL2_ProcessEvent(&e);
             if (e.type == SDL_QUIT) quit = true;
         }
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("Renderer Controls");
+        ImGui::Text("test yo");
+
+        ImGui::SliderFloat("Cube rotation x", &rotX, -1.0f, 1.0f);
+        ImGui::SliderFloat("Cube rotation y", &rotY, -1.0f, 1.0f);
+
+        ImGui::SliderFloat("Camera view Z", &viewZ, -10.0f, 10.0f);
+        ImGui::SliderFloat("Camera Rotation X", &CamrotX, -180.0f, 180.0f);
+        ImGui::SliderFloat("Camera Rotation Y", &CamrotY, -180.0f, 180.0f);
+
+        ImGui::End();
 
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -92,14 +130,39 @@ int main(int argc, char* args[]) {
         triangleShader.use();
         glBindVertexArray(VAO);
 
+        glm::mat4 model = glm::mat4(1.0f);
+        float timeValue = SDL_GetTicks() / 1000.0f; 
+        model = glm::rotate(model, timeValue, glm::vec3(rotX, rotY, 0.0f)); 
+
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, viewZ));
+        view = glm::rotate(view, glm::radians(CamrotX), glm::vec3(1.0f, 0.0f, 0.0f));
+        view = glm::rotate(view, glm::radians(CamrotY), glm::vec3(0.0f, 1.0f, 0.0f));
+
+        glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+
+        int modelLoc = glGetUniformLocation(shaderProgram, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        int viewLoc = glGetUniformLocation(shaderProgram, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        int projLoc = glGetUniformLocation(shaderProgram, "projection");
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
         int uni_loc = glGetUniformLocation(shaderProgram, "src_aspect");
         glUniform1f(uni_loc, (float)SCREEN_HEIGHT / SCREEN_WIDTH);
 
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(window);
     }
 
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
