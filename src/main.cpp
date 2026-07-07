@@ -1,6 +1,7 @@
 #define GLEW_STATIC
 
 #include <iostream>
+#include <cstddef>
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
@@ -13,6 +14,7 @@
 
 #include "renderer/vertex.h"
 #include "renderer/shader.h"
+#include "renderer/shapes.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -59,32 +61,12 @@ int main(int argc, char* args[]) {
     Shader GridShader;
     GLuint GridshaderProgram = GridShader.CreateProgram("../src/renderer/shaders/grid.vert", "../src/renderer/shaders/grid.frag");
 
-    Vertex square[] = {
-        // Front face (Red)
-        {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, { 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f},
-        { 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, {-0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f}, {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f},
-        // Back face (Green)
-        {-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f}, { 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f}, { 0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f},
-        { 0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f}, {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f}, {-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f},
-        // Left face (Blue)
-        {-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f}, {-0.5f,  0.5f, -0.5f,  0.0f, 0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f},
-        {-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 1.0f}, {-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f}, {-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f},
-        // Right face (Yellow)
-        { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f}, { 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f}, { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f},
-        { 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f}, { 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, 0.0f}, { 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f},
-        // Top face (Cyan)
-        {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f}, { 0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f}, { 0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f},
-        { 0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f}, {-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f}, {-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f},
-        // Bottom face (Magenta)
-        {-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}, { 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}, { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f},
-        { 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f}, {-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 1.0f}, {-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 1.0f}
-    };
-
     float rotX = 0.0f;
     float rotY = 0.0f;
     float viewZ = 0.0f;
     float CamrotX = 0.0f;
     float CamrotY = 0.0f;
+    bool bEnableGrid = false;
 
     unsigned int VAO, VBO;
     glGenVertexArrays(1, &VAO);
@@ -94,12 +76,10 @@ int main(int argc, char* args[]) {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
 
-
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
     glEnableVertexAttribArray(0);
 
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
     glEnableVertexAttribArray(1);
 
     unsigned int emptyVAO;
@@ -129,6 +109,10 @@ int main(int argc, char* args[]) {
         ImGui::SliderFloat("Camera view Z", &viewZ, -10.0f, 0.0f);
         ImGui::SliderFloat("Camera Rotation X", &CamrotX, -180.0f, 180.0f);
         ImGui::SliderFloat("Camera Rotation Y", &CamrotY, -180.0f, 180.0f);
+
+        if (ImGui::Button("Turn on grid")){
+            bEnableGrid = !bEnableGrid;
+        }
 
         ImGui::End();
 
@@ -160,13 +144,15 @@ int main(int argc, char* args[]) {
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        GridShader.use();
-        glBindVertexArray(emptyVAO);
+        if (bEnableGrid){
+            GridShader.use();
+            glBindVertexArray(emptyVAO);
 
-        glUniformMatrix4fv(glGetUniformLocation(GridShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(glGetUniformLocation(GridShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+            glUniformMatrix4fv(glGetUniformLocation(GridShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+            glUniformMatrix4fv(glGetUniformLocation(GridShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+        }
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
