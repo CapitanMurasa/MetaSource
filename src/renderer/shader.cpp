@@ -5,7 +5,11 @@
 #include "shader.h"
 
 using namespace std;
-Shader::Shader(const char* vertexPath, const char* fragmentPath) {
+Shader::Shader() {
+
+}
+
+GLuint Shader::CreateProgram(const char* vertexPath, const char* fragmentPath){
     string vertexCode;
     string fragmentCode;
     ifstream vShaderFile;
@@ -48,18 +52,26 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     checkCompileErrors(fragment, "FRAGMENT");
 
     ID = glCreateProgram();
+    if (ID){
     glAttachShader(ID, vertex);
     glAttachShader(ID, fragment);
     glLinkProgram(ID);
     checkCompileErrors(ID, "PROGRAM");
-
-    glDeleteShader(vertex);
-    glDeleteShader(fragment);
+        return ID;
+    }
 }
 
 void Shader::use() { 
-    glUseProgram(ID); 
+    glUseProgram(ID);
 }
+
+/*
+void Shader::Cleanup(){
+    glDeleteShader(vertex);
+    glDeleteShader(fragment);
+}
+*/
+
 
 void Shader::checkCompileErrors(unsigned int shader, string type) {
     int success;
