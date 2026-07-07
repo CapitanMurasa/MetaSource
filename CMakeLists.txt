@@ -27,6 +27,6 @@ target_link_libraries(MetaSource
 )
 target_include_directories(MetaSource PRIVATE 
     ${CMAKE_SOURCE_DIR}/extras/glm
-    ${CMAKE_SOURCE_DIR}/extras/imgui          # Tells the compiler where to find imgui.h
-    ${CMAKE_SOURCE_DIR}/extras/imgui/backends # Tells the compiler where to find backend headers
+    ${CMAKE_SOURCE_DIR}/extras/imgui          
+    ${CMAKE_SOURCE_DIR}/extras/imgui/backends
 )
