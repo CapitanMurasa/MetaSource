@@ -2,11 +2,11 @@
 #define SHADER_H
 
 #include <string>
-#include <GL/glew.h> // Ensure GLEW is initialized before using this
+#include <GL/glew.h>
 
 class Shader {
 public:
-    unsigned int ID; // The OpenGL Program ID
+    unsigned int ID;
 
     Shader();
     
