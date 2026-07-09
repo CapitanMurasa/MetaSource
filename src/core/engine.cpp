@@ -42,7 +42,7 @@ bool Engine::Init(){
     cubeShader = CubeShader->CreateProgram("../src/renderer/shaders/default.vert", "../src/renderer/shaders/default.frag");
     GridShader = new Shader();
     gridShader = GridShader->CreateProgram("../src/renderer/shaders/grid.vert", "../src/renderer/shaders/grid.frag");
-    MeishoDoto = new Texture("../textures/Doto.png");
+    MeishoDoto = new Texture("../textures/holmy.jpg");
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -72,6 +72,7 @@ bool Engine::Init(){
 
 void Engine::Run(){
     bool bIsRunning = true;
+    lastTime = (float)SDL_GetTicks() / 1000.0f;
 
     while (bIsRunning){
         if (!ProcessInput()){
@@ -90,6 +91,7 @@ bool Engine::ProcessInput() {
         if (e.type == SDL_QUIT) {
             return false; 
         }
+
     }
     
     return true; 
@@ -101,7 +103,7 @@ void Engine::Render(){
     ImGui::NewFrame();
 
     ImGui::Begin("Renderer Controls");
-    ImGui::Text("test yo");
+    ImGui::Text("fps: %.1f", fps);
 
     ImGui::SliderFloat("Cube rotation x", &rotX, -1.0f, 1.0f);
     ImGui::SliderFloat("Cube rotation y", &rotY, -1.0f, 1.0f);
@@ -115,6 +117,15 @@ void Engine::Render(){
     }
 
     ImGui::End();
+
+    double currenttime = (float)SDL_GetTicks() / 1000.0f;
+    frameCount++;
+
+    if (currenttime - lastTime >= 1.0){
+        fps = static_cast<float>(frameCount) / (currenttime - lastTime);
+        frameCount = 0;
+        lastTime = currenttime;
+    }
 
     mainCam->ChangeView(glm::vec3(CamrotX, CamrotY, 0.0f));
 
