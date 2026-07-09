@@ -42,6 +42,7 @@ bool Engine::Init(){
     cubeShader = CubeShader->CreateProgram("../src/renderer/shaders/default.vert", "../src/renderer/shaders/default.frag");
     GridShader = new Shader();
     gridShader = GridShader->CreateProgram("../src/renderer/shaders/grid.vert", "../src/renderer/shaders/grid.frag");
+    MeishoDoto = new Texture("../textures/Doto.png");
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -55,6 +56,9 @@ bool Engine::Init(){
 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+    glEnableVertexAttribArray(2);
 
     glGenVertexArrays(1, &emptyVAO);
 
@@ -118,6 +122,7 @@ void Engine::Render(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     CubeShader->use();
+    MeishoDoto->Bind();
     glBindVertexArray(VAO);
 
     glm::mat4 model = glm::mat4(1.0f);

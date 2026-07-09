@@ -16,6 +16,7 @@
 #include "../renderer/shader.h"
 #include "../renderer/shapes.h"
 #include "../renderer/camera.h"
+#include "../renderer/texture.h"
 
 class Engine{
     public:
@@ -58,4 +59,5 @@ class Engine{
     Camera* mainCam;
     Shader* CubeShader;
     Shader* GridShader;
+    Texture* MeishoDoto;
 };
