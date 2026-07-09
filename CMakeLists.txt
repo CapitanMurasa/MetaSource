@@ -3,7 +3,10 @@ project(MetaSource)
 
 add_executable(MetaSource 
     src/main.cpp 
+    src/core/engine.cpp
     src/renderer/shader.cpp
+    src/renderer/camera.cpp
+    src/renderer/shapes.cpp
     extras/imgui/imgui.cpp
     extras/imgui/imgui_demo.cpp
     extras/imgui/imgui_draw.cpp
