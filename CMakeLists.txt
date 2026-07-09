@@ -6,6 +6,7 @@ add_executable(MetaSource
     src/core/engine.cpp
     src/renderer/shader.cpp
     src/renderer/camera.cpp
+    src/renderer/texture.cpp
     src/renderer/shapes.cpp
     extras/imgui/imgui.cpp
     extras/imgui/imgui_demo.cpp
