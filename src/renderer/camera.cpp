@@ -1,4 +1,4 @@
-#include <camera.h>
+#include "camera.h"
 
 Camera::Camera(int ScreenHeight, int ScreenWidth) 
     : SCREEN_HEIGHT(ScreenHeight), SCREEN_WIDTH(ScreenWidth) {
@@ -15,7 +15,7 @@ void Camera::ChangeView(glm::vec3 rotation){
 
 glm::mat4 Camera::returnView(){
     view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, viewZ));
+    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -7.0f));
     view = glm::rotate(view, glm::radians(CamrotX), glm::vec3(1.0f, 0.0f, 0.0f));
     view = glm::rotate(view, glm::radians(CamrotY), glm::vec3(0.0f, 1.0f, 0.0f));
     return view;

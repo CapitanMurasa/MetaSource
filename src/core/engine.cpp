@@ -56,7 +56,6 @@ bool Engine::Init(){
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
     glEnableVertexAttribArray(1);
 
-    unsigned int emptyVAO;
     glGenVertexArrays(1, &emptyVAO);
 
     glEnable(GL_DEPTH_TEST);
@@ -143,8 +142,8 @@ void Engine::Render(){
         GridShader->use();
         glBindVertexArray(emptyVAO);
 
-        glUniformMatrix4fv(glGetUniformLocation(gridShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(glGetUniformLocation(gridShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+        glUniformMatrix4fv(glGetUniformLocation(gridShader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(glGetUniformLocation(gridShader, "view"), 1, GL_FALSE, glm::value_ptr(view));
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }

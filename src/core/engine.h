@@ -41,6 +41,7 @@ class Engine{
     bool bEnableGrid = false;
 
     unsigned int VAO, VBO;
+    unsigned int emptyVAO;
 
     float rotX = 0.0f;
     float rotY = 0.0f;
