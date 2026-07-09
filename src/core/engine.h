@@ -49,6 +49,14 @@ class Engine{
     float CamrotX = 0.0f;
     float CamrotY = 0.0f;
 
+    float yaw = 0.0f;   
+    float pitch = 0.0f;
+    float sensetivity = 1.4f;
+
+    double lastTime;
+    int frameCount = 0;
+    float fps = 0.0f;
+
     private:
     GLuint cubeShader;
     GLuint gridShader;
