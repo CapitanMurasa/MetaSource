@@ -11,8 +11,6 @@ uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
-	int Index = Indices[gl_VertexID];
-	vec4 vPos = vec4(Pos[Index], 1.0);
     gl_Position = projection * view * model * vec4(a_pos, 1.0);
     rgb = Color;
 	TexCoord = VertexTexCoord;

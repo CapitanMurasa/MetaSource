@@ -42,7 +42,7 @@ bool Engine::Init(){
     cubeShader = CubeShader->CreateProgram("../src/renderer/shaders/default.vert", "../src/renderer/shaders/default.frag");
     GridShader = new Shader();
     gridShader = GridShader->CreateProgram("../src/renderer/shaders/grid.vert", "../src/renderer/shaders/grid.frag");
-    MeishoDoto = new Texture("../textures/holmy.jpg");
+    MeishoDoto = new Texture("../textures/Doto.png");
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
