@@ -40,6 +40,7 @@ class Engine{
     int SCREEN_HEIGHT = 720;
 
     bool bEnableGrid = false;
+    bool bIsDragging = false;
 
     unsigned int VAO, VBO;
     unsigned int emptyVAO;
@@ -51,7 +52,7 @@ class Engine{
 
     float yaw = 0.0f;   
     float pitch = 0.0f;
-    float sensetivity = 1.4f;
+    float sensetivity = 0.9f;
 
     double lastTime;
     int frameCount = 0;

@@ -87,9 +87,34 @@ bool Engine::ProcessInput() {
     
     while (SDL_PollEvent(&e)) {
         ImGui_ImplSDL2_ProcessEvent(&e);
+
         
         if (e.type == SDL_QUIT) {
             return false; 
+        }
+        if (!bIsDragging){
+            SDL_SetRelativeMouseMode(SDL_FALSE);
+        }
+        if (e.type == SDL_MOUSEBUTTONDOWN){
+            if (e.button.button == SDL_BUTTON_RIGHT){
+                bIsDragging = true;
+                SDL_SetRelativeMouseMode(SDL_TRUE);
+            }
+        }
+        if (e.type == SDL_MOUSEBUTTONUP) {
+            if (e.button.button == SDL_BUTTON_RIGHT) {
+                bIsDragging = false;
+                
+                SDL_SetRelativeMouseMode(SDL_FALSE);
+            }
+        }
+        if (e.type == SDL_MOUSEMOTION){
+            if (bIsDragging){
+                float yaw = e.motion.xrel * sensetivity;
+                float pitch = e.motion.yrel * sensetivity;
+
+                mainCam->ChangeView(glm::vec3(pitch, yaw, 0.0f));
+            }
         }
 
     }
@@ -109,8 +134,8 @@ void Engine::Render(){
     ImGui::SliderFloat("Cube rotation y", &rotY, -1.0f, 1.0f);
 
     //ImGui::SliderFloat("Camera view Z", &viewZ, -10.0f, 0.0f);
-    ImGui::SliderFloat("Camera Rotation X", &CamrotX, -180.0f, 180.0f);
-    ImGui::SliderFloat("Camera Rotation Y", &CamrotY, -180.0f, 180.0f);
+    //ImGui::SliderFloat("Camera Rotation X", &CamrotX, -180.0f, 180.0f);
+    //ImGui::SliderFloat("Camera Rotation Y", &CamrotY, -180.0f, 180.0f);
 
     if (ImGui::Button("Turn on grid")){
         bEnableGrid = !bEnableGrid;

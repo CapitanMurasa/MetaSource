@@ -9,8 +9,17 @@ Camera::~Camera(){
 }
 
 void Camera::ChangeView(glm::vec3 rotation){
-    CamrotX = rotation.x;
-    CamrotY = rotation.y;
+    CamrotX += rotation.x;
+    CamrotY += rotation.y;
+
+    /*
+    if (CamrotY > 89.0f) {
+        CamrotY = 89.0f;
+    }
+    if (CamrotY < -89.0f) {
+        CamrotY = -89.0f;
+    }
+    */
 }
 
 glm::mat4 Camera::returnView(){
