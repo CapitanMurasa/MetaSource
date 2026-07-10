@@ -17,6 +17,7 @@
 #include "../renderer/shapes.h"
 #include "../renderer/camera.h"
 #include "../renderer/texture.h"
+#include "../renderer/mesh.h"
 
 class Engine{
     public:
@@ -42,8 +43,9 @@ class Engine{
     bool bEnableGrid = false;
     bool bIsDragging = false;
 
-    unsigned int VAO, VBO;
-    unsigned int emptyVAO;
+    GLuint vaoCube, vboCube;
+    GLuint vaoPyramid, vboPyramid;
+    unsigned int gridVAO;
 
     float rotX = 0.0f;
     float rotY = 0.0f;
@@ -69,4 +71,6 @@ class Engine{
     Shader* CubeShader;
     Shader* GridShader;
     Texture* MeishoDoto;
+    Mesh* Cube = nullptr;
+    Mesh* Pyramid = nullptr;
 };

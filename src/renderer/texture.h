@@ -7,7 +7,7 @@ class Texture{
     public:
 
     Texture(const std::string& path);
-    ~Texture();
+    //~Texture();
 
     void Bind();
     void Unbind();

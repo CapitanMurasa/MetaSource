@@ -44,23 +44,10 @@ bool Engine::Init(){
     gridShader = GridShader->CreateProgram("../src/renderer/shaders/grid.vert", "../src/renderer/shaders/grid.frag");
     MeishoDoto = new Texture("../textures/Doto.png");
 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    Pyramid = new Mesh(pyramid, 18);
+    Cube = new Mesh(square, 36);
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(square), square, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
-    glEnableVertexAttribArray(1);
-
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-    glEnableVertexAttribArray(2);
-
-    glGenVertexArrays(1, &emptyVAO);
+    glGenVertexArrays(1, &gridVAO);
 
     glEnable(GL_DEPTH_TEST);
 
@@ -159,7 +146,6 @@ void Engine::Render(){
 
     CubeShader->use();
     MeishoDoto->Bind();
-    glBindVertexArray(VAO);
 
     glm::mat4 model = glm::mat4(1.0f);
     float timeValue = SDL_GetTicks() / 1000.0f; 
@@ -178,10 +164,19 @@ void Engine::Render(){
     int projLoc = glGetUniformLocation(cubeShader, "projection");
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    Cube->Draw();
+
+    glm::mat4 pyramid = glm::mat4(1.0f);
+    pyramid = glm::translate(pyramid, glm::vec3(2.0f, 0.0f, 0.0f));
+
+    int PyramidModelLoc = glGetUniformLocation(cubeShader, "model");
+    glUniformMatrix4fv(PyramidModelLoc, 1, GL_FALSE, glm::value_ptr(pyramid));
+
+    Pyramid->Draw();
+
     if (bEnableGrid){
         GridShader->use();
-        glBindVertexArray(emptyVAO);
+        glBindVertexArray(gridVAO);
 
         glUniformMatrix4fv(glGetUniformLocation(gridShader, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(glGetUniformLocation(gridShader, "view"), 1, GL_FALSE, glm::value_ptr(view));
@@ -198,6 +193,7 @@ void Engine::Shutdown(){
     delete mainCam;
     delete CubeShader;
     delete GridShader;
+    delete MeishoDoto;
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
