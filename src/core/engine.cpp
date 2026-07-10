@@ -194,6 +194,8 @@ void Engine::Shutdown(){
     delete CubeShader;
     delete GridShader;
     delete MeishoDoto;
+    delete Cube;
+    delete Pyramid;
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
