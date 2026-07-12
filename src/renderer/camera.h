@@ -10,7 +10,7 @@ class Camera{
     Camera(int ScreenHeight, int ScreenWidth);
     ~Camera();
 
-    void ChangeView(glm::vec3 rotation);
+    void ChangeRotation(glm::vec3 rotation);
     void ChangePerspective();
     glm::mat4 returnView();
     glm::mat4 returnPerspective();

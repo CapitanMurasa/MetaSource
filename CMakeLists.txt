@@ -9,7 +9,7 @@ add_executable(MetaSource
     src/renderer/texture.cpp
     src/renderer/shapes.cpp
     src/renderer/mesh.cpp
-    
+    src/renderer/lighting.cpp
     extras/imgui/imgui.cpp
     extras/imgui/imgui_demo.cpp
     extras/imgui/imgui_draw.cpp

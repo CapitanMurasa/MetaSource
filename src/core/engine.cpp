@@ -43,6 +43,7 @@ bool Engine::Init(){
     GridShader = new Shader();
     gridShader = GridShader->CreateProgram("../src/renderer/shaders/grid.vert", "../src/renderer/shaders/grid.frag");
     MeishoDoto = new Texture("../textures/Doto.png");
+    light = new lighting();
 
     Pyramid = new Mesh(pyramid, 18);
     Cube = new Mesh(square, 36);
@@ -100,7 +101,7 @@ bool Engine::ProcessInput() {
                 float yaw = e.motion.xrel * sensetivity;
                 float pitch = e.motion.yrel * sensetivity;
 
-                mainCam->ChangeView(glm::vec3(pitch, yaw, 0.0f));
+                mainCam->ChangeRotation(glm::vec3(pitch, yaw, 0.0f));
             }
         }
 
@@ -139,10 +140,22 @@ void Engine::Render(){
         lastTime = currenttime;
     }
 
-    mainCam->ChangeView(glm::vec3(CamrotX, CamrotY, 0.0f));
+    //mainCam->ChangeRotation(glm::vec3(CamrotX, CamrotY, 0.0f));
 
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glm::mat4 view = mainCam->returnView();
+
+    glm::mat4 projection = mainCam->returnPerspective();
+
+    glm::mat4 lightModel = glm::mat4(1.0f);
+
+    lightModel = glm::translate(lightModel, glm::vec3(-3.0f, 1.0f, 2.0f));
+
+    lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+
+    light->SetuplightingSource(glm::vec3(1.0, 0.0, 0.0), lightModel, view, projection);
 
     CubeShader->use();
     MeishoDoto->Bind();
@@ -150,10 +163,6 @@ void Engine::Render(){
     glm::mat4 model = glm::mat4(1.0f);
     float timeValue = SDL_GetTicks() / 1000.0f; 
     model = glm::rotate(model, timeValue, glm::vec3(rotX, rotY, 0.0f)); 
-
-    glm::mat4 view = mainCam->returnView();
-
-    glm::mat4 projection = mainCam->returnPerspective();
 
     int modelLoc = glGetUniformLocation(cubeShader, "model");
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
@@ -164,6 +173,8 @@ void Engine::Render(){
     int projLoc = glGetUniformLocation(cubeShader, "projection");
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+    light->light(glm::vec3(1.0, 0.0, 0.0), model, view, projection);
+
     Cube->Draw();
 
     glm::mat4 pyramid = glm::mat4(1.0f);
@@ -171,6 +182,8 @@ void Engine::Render(){
 
     int PyramidModelLoc = glGetUniformLocation(cubeShader, "model");
     glUniformMatrix4fv(PyramidModelLoc, 1, GL_FALSE, glm::value_ptr(pyramid));
+
+    light->light(glm::vec3(1.0, 0.0, 1.0), pyramid, view, projection);
 
     Pyramid->Draw();
 
@@ -196,6 +209,7 @@ void Engine::Shutdown(){
     delete MeishoDoto;
     delete Cube;
     delete Pyramid;
+    delete light;
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();

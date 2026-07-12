@@ -18,6 +18,7 @@
 #include "../renderer/camera.h"
 #include "../renderer/texture.h"
 #include "../renderer/mesh.h"
+#include "../renderer/lighting.h"
 
 class Engine{
     public:
@@ -71,6 +72,7 @@ class Engine{
     Shader* CubeShader;
     Shader* GridShader;
     Texture* MeishoDoto;
-    Mesh* Cube = nullptr;
-    Mesh* Pyramid = nullptr;
+    Mesh* Cube;
+    Mesh* Pyramid;
+    lighting* light;
 };

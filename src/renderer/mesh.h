@@ -9,5 +9,6 @@ class Mesh{
     int vertexCount;
 
     Mesh(Vertex* vertrices, int count);
+    ~Mesh();
     void Draw();
 };

@@ -8,7 +8,7 @@ Camera::~Camera(){
 
 }
 
-void Camera::ChangeView(glm::vec3 rotation){
+void Camera::ChangeRotation(glm::vec3 rotation){
     CamrotX += rotation.x;
     CamrotY += rotation.y;
 
