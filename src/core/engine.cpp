@@ -121,9 +121,11 @@ void Engine::Render(){
     ImGui::SliderFloat("Cube rotation x", &rotX, -1.0f, 1.0f);
     ImGui::SliderFloat("Cube rotation y", &rotY, -1.0f, 1.0f);
 
-    //ImGui::SliderFloat("Camera view Z", &viewZ, -10.0f, 0.0f);
-    //ImGui::SliderFloat("Camera Rotation X", &CamrotX, -180.0f, 180.0f);
-    //ImGui::SliderFloat("Camera Rotation Y", &CamrotY, -180.0f, 180.0f);
+    ImGui::Text("light controls");
+
+    ImGui::SliderFloat("Light position X", &LightPosX, -10.0f, 10.0f);
+    ImGui::SliderFloat("Light position Y", &LightPosY, -10.0f, 10.0f);
+    ImGui::SliderFloat("Light position Z", &LightPosZ, -10.0f, 10.0f);
 
     if (ImGui::Button("Turn on grid")){
         bEnableGrid = !bEnableGrid;
@@ -151,7 +153,7 @@ void Engine::Render(){
 
     glm::mat4 lightModel = glm::mat4(1.0f);
 
-    lightModel = glm::translate(lightModel, glm::vec3(-3.0f, 1.0f, 2.0f));
+    lightModel = glm::translate(lightModel, glm::vec3(LightPosX, LightPosY, LightPosZ));
 
     lightModel = glm::scale(lightModel, glm::vec3(0.2f));
 

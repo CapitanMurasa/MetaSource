@@ -18,6 +18,7 @@ lighting::lighting(){
     srcViewLoc = glGetUniformLocation(shaderProgram, "view");
     srcProjLoc = glGetUniformLocation(shaderProgram, "projection");
     srcAmbient = glGetUniformLocation(shaderProgram, "AmbientLight");
+    srcLightpos = glGetUniformLocation(shaderProgram, "LightPos");
 
 
     objColorLoc = glGetUniformLocation(shaderSourceProgram, "lightColor");
@@ -39,6 +40,7 @@ void lighting::light(glm::vec3 color, glm::mat4 model, glm::mat4 view, glm::mat4
 
     glUniform3f(srcColorLoc, color.x, color.y, color.z);
     glUniform3f(srcAmbient, 0.15, 0.15, 0.15);
+    glUniform3fv(srcLightpos, 1, glm::value_ptr(LightPos));
     glUniformMatrix4fv(srcModelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(srcViewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(srcProjLoc, 1, GL_FALSE, glm::value_ptr(proj));
@@ -46,6 +48,8 @@ void lighting::light(glm::vec3 color, glm::mat4 model, glm::mat4 view, glm::mat4
 
 void lighting::SetuplightingSource(glm::vec3 color, glm::mat4 model, glm::mat4 view, glm::mat4 proj){
     lightSourceShader->use();
+
+    LightPos = glm::vec3(model[3]);
     
     glUniform3f(objColorLoc, color.x, color.y, color.z);
     glUniformMatrix4fv(objModelLoc, 1, GL_FALSE, glm::value_ptr(model));

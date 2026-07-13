@@ -20,9 +20,10 @@ class lighting{
     private:
     glm::vec3 col;
     glm::vec3 Ambient = glm::vec3(0.15, 0.15, 0.15);
+    glm::vec3 LightPos;
 
     GLuint objColorLoc, objModelLoc, objViewLoc, objProjLoc;
-    GLuint srcColorLoc, srcModelLoc, srcViewLoc, srcProjLoc, srcAmbient;
+    GLuint srcColorLoc, srcModelLoc, srcViewLoc, srcProjLoc, srcAmbient, srcLightpos;
     
     Shader* lighthingShader;
     Shader* lightSourceShader;

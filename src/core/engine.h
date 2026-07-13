@@ -53,6 +53,10 @@ class Engine{
     float CamrotX = 0.0f;
     float CamrotY = 0.0f;
 
+    float LightPosX = 0.0f;
+    float LightPosY = 0.0f;
+    float LightPosZ = 0.0f;
+
     float yaw = 0.0f;   
     float pitch = 0.0f;
     float sensetivity = 0.9f;
