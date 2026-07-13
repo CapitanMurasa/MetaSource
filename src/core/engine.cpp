@@ -173,7 +173,7 @@ void Engine::Render(){
     int projLoc = glGetUniformLocation(cubeShader, "projection");
     glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
-    light->light(glm::vec3(1.0, 0.0, 0.0), model, view, projection);
+    light->light(glm::vec3(1.0, 1.0, 1.0), model, view, projection);
 
     Cube->Draw();
 
@@ -183,7 +183,7 @@ void Engine::Render(){
     int PyramidModelLoc = glGetUniformLocation(cubeShader, "model");
     glUniformMatrix4fv(PyramidModelLoc, 1, GL_FALSE, glm::value_ptr(pyramid));
 
-    light->light(glm::vec3(1.0, 0.0, 1.0), pyramid, view, projection);
+    light->light(glm::vec3(1.0, 1.0, 1.0), pyramid, view, projection);
 
     Pyramid->Draw();
 
