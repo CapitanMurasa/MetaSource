@@ -56,12 +56,14 @@ bool Engine::Init(){
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    Console::GetInstance().log("Engine initiated successfully!", INFO);
     return true;
 }
 
 void Engine::Run(){
     bool bIsRunning = true;
     lastTime = (float)SDL_GetTicks() / 1000.0f;
+    Console::GetInstance().log("Runing engine...", WARNING);
 
     while (bIsRunning){
         if (!ProcessInput()){

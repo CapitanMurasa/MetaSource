@@ -11,6 +11,7 @@ public:
     Shader();
     
     void use();
+    
     GLuint CreateProgram(const char* vertexPath, const char* fragmentPath);
     //void setBool(const std::string &name, bool value) const;
     //void setInt(const std::string &name, int value) const;
@@ -18,6 +19,7 @@ public:
 
 private:
     void checkCompileErrors(unsigned int shader, std::string type);
+    std::string fpathvert, fpathfrag;
 };
 
 #endif

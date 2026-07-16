@@ -17,6 +17,8 @@ GLuint Shader::CreateProgram(const char* vertexPath, const char* fragmentPath){
     ifstream vShaderFile;
     ifstream fShaderFile;
 
+    fpathfrag = std::string(fragmentPath);
+    fpathvert = std::string(vertexPath);
 
     vShaderFile.exceptions(ifstream::failbit | ifstream::badbit);
     fShaderFile.exceptions(ifstream::failbit | ifstream::badbit);
@@ -78,18 +80,27 @@ void Shader::Cleanup(){
 void Shader::checkCompileErrors(unsigned int shader, string type) {
     int success;
     char infoLog[1024];
+    std::string sourcefile;
+
+    
     if (type != "PROGRAM") {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            std::string errormessage = "ERROR::SHADER_COMPILATION_ERROR of type: " + type + "\n" + infoLog + "\n";
+            if (type == "VERTEX"){
+                sourcefile = fpathvert;
+            }
+            else if (type == "FRAGMENT"){
+                sourcefile = fpathfrag;
+            }
+            std::string errormessage = "error at " + type + " in shader: " + sourcefile + "\n" + "shader compilation error:" "\n" + infoLog + "\n";
             Console::GetInstance().log(errormessage, ERROR);
         }
     } else {
         glGetProgramiv(shader, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            std::string errormessage = "ERROR::PROGRAM_LINKING_ERROR of type: " + type + "\n" + infoLog + "\n";
+            std::string errormessage = "error at " + type + "\n" + "program linking error: " + infoLog + "\n";
             Console::GetInstance().log(errormessage, ERROR);
             
         }
