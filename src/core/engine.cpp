@@ -45,6 +45,7 @@ bool Engine::Init(){
     MeishoDoto = new Texture("../textures/Doto.png");
     light = new lighting();
 
+
     Pyramid = new Mesh(pyramid, 18);
     Cube = new Mesh(square, 36);
 
@@ -77,32 +78,43 @@ bool Engine::ProcessInput() {
         ImGui_ImplSDL2_ProcessEvent(&e);
 
         
-        if (e.type == SDL_QUIT) {
-            return false; 
-        }
         if (!bIsDragging){
             SDL_SetRelativeMouseMode(SDL_FALSE);
         }
-        if (e.type == SDL_MOUSEBUTTONDOWN){
+
+        switch (e.type)
+        {
+        case SDL_QUIT:
+            return false;
+            break;
+        case SDL_MOUSEBUTTONDOWN:
             if (e.button.button == SDL_BUTTON_RIGHT){
                 bIsDragging = true;
                 SDL_SetRelativeMouseMode(SDL_TRUE);
             }
-        }
-        if (e.type == SDL_MOUSEBUTTONUP) {
+            break;
+        case SDL_MOUSEBUTTONUP:
             if (e.button.button == SDL_BUTTON_RIGHT) {
                 bIsDragging = false;
-                
                 SDL_SetRelativeMouseMode(SDL_FALSE);
             }
-        }
-        if (e.type == SDL_MOUSEMOTION){
+            break;
+        case SDL_MOUSEMOTION:
             if (bIsDragging){
                 float yaw = e.motion.xrel * sensetivity;
                 float pitch = e.motion.yrel * sensetivity;
-
                 mainCam->ChangeRotation(glm::vec3(pitch, yaw, 0.0f));
             }
+            break;
+        case SDL_KEYUP:
+            if (e.key.keysym.sym == SDLK_SPACE) {
+                if (!Console::GetInstance().IsActive())
+                    Console::GetInstance().Show();
+                else
+                    Console::GetInstance().Hide();
+            }
+        default:
+            break;
         }
 
     }
@@ -114,6 +126,8 @@ void Engine::Render(){
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
+
+    Console::GetInstance().Body();
 
     ImGui::Begin("Renderer Controls");
     ImGui::Text("fps: %.1f", fps);

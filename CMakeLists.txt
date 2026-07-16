@@ -10,6 +10,8 @@ add_executable(MetaSource
     src/renderer/shapes.cpp
     src/renderer/mesh.cpp
     src/renderer/lighting.cpp
+    src/ui/console.cpp
+
     extras/imgui/imgui.cpp
     extras/imgui/imgui_demo.cpp
     extras/imgui/imgui_draw.cpp
@@ -33,6 +35,6 @@ target_link_libraries(MetaSource
 )
 target_include_directories(MetaSource PRIVATE 
     ${CMAKE_SOURCE_DIR}/extras/glm
-    ${CMAKE_SOURCE_DIR}/extras/imgui          # Tells the compiler where to find imgui.h
-    ${CMAKE_SOURCE_DIR}/extras/imgui/backends # Tells the compiler where to find backend headers
+    ${CMAKE_SOURCE_DIR}/extras/imgui          
+    ${CMAKE_SOURCE_DIR}/extras/imgui/backends 
 )

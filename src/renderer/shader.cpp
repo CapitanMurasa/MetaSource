@@ -3,9 +3,11 @@
 #include <iostream>
 
 #include "shader.h"
+#include "../ui/console.h"
 
 using namespace std;
-Shader::Shader() {
+
+Shader::Shader(){
 
 }
 
@@ -80,13 +82,16 @@ void Shader::checkCompileErrors(unsigned int shader, string type) {
         glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
         if (!success) {
             glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-            cout << "ERROR::SHADER_COMPILATION_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << endl;
+            std::string errormessage = "ERROR::SHADER_COMPILATION_ERROR of type: " + type + "\n" + infoLog + "\n";
+            Console::GetInstance().log(errormessage, ERROR);
         }
     } else {
         glGetProgramiv(shader, GL_LINK_STATUS, &success);
         if (!success) {
             glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-            cout << "ERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- " << endl;
+            std::string errormessage = "ERROR::PROGRAM_LINKING_ERROR of type: " + type + "\n" + infoLog + "\n";
+            Console::GetInstance().log(errormessage, ERROR);
+            
         }
     }
 }

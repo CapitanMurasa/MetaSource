@@ -19,6 +19,7 @@
 #include "../renderer/texture.h"
 #include "../renderer/mesh.h"
 #include "../renderer/lighting.h"
+#include "../ui/console.h"
 
 class Engine{
     public:
@@ -36,6 +37,8 @@ class Engine{
     void Update();
 
     void Render();
+
+    //Console* console;
 
     protected:
     int SCREEN_WIDTH = 1280;
