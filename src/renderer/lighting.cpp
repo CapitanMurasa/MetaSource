@@ -19,6 +19,8 @@ lighting::lighting(){
     srcProjLoc = glGetUniformLocation(shaderProgram, "projection");
     srcAmbient = glGetUniformLocation(shaderProgram, "AmbientLight");
     srcLightpos = glGetUniformLocation(shaderProgram, "LightPos");
+    srcTransposeInvModel = glGetUniformLocation(shaderProgram, "transinvmodel");
+    srcViewPosLoc = glGetUniformLocation(shaderProgram, "viewPos");
 
 
     objColorLoc = glGetUniformLocation(shaderSourceProgram, "lightColor");
@@ -30,17 +32,14 @@ lighting::lighting(){
 void lighting::light(glm::vec3 color, glm::mat4 model, glm::mat4 view, glm::mat4 proj){
     lighthingShader->use();
 
-    /*
-    std::cout << srcColorLoc << std::endl;
-    std::cout << srcModelLoc << std::endl;
-    std::cout << srcViewLoc << std::endl;
-    std::cout << srcProjLoc << std::endl;
-    std::cout << srcAmbient << std::endl;
-    */
+    glm::mat3 transposeInverseModel = glm::transpose(glm::inverse(glm::mat3(model)));
+    glm::vec3 viewPos = glm::vec3(glm::inverse(view)[3]);
 
     glUniform3f(srcColorLoc, color.x, color.y, color.z);
     glUniform3f(srcAmbient, 0.15, 0.15, 0.15);
     glUniform3fv(srcLightpos, 1, glm::value_ptr(LightPos));
+    glUniform3fv(srcViewPosLoc, 1, glm::value_ptr(viewPos));
+    glUniformMatrix3fv(srcTransposeInvModel, 1, GL_FALSE, glm::value_ptr(transposeInverseModel));
     glUniformMatrix4fv(srcModelLoc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(srcViewLoc, 1, GL_FALSE, glm::value_ptr(view));
     glUniformMatrix4fv(srcProjLoc, 1, GL_FALSE, glm::value_ptr(proj));

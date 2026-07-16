@@ -23,7 +23,7 @@ class lighting{
     glm::vec3 LightPos;
 
     GLuint objColorLoc, objModelLoc, objViewLoc, objProjLoc;
-    GLuint srcColorLoc, srcModelLoc, srcViewLoc, srcProjLoc, srcAmbient, srcLightpos;
+    GLuint srcColorLoc, srcModelLoc, srcViewLoc, srcProjLoc, srcAmbient, srcLightpos, srcTransposeInvModel, srcViewPosLoc;
     
     Shader* lighthingShader;
     Shader* lightSourceShader;
